@@ -4,11 +4,11 @@ const config = require("../common/config");
 
 const User = require("../services/auth/models/User");
 
-const demoUsers = require("../services/auth/utils/demoUsers");
-const demoProducts = require("../services/products/utils/demoProducts");
-const LIFECYCLE = require("../services/products/utils/lifecycle");
+const demoUsers = require("../common/utils/demoUsers");
+const demoProducts = require("../common/utils/demoProducts");
+const LIFECYCLE = require("../common/utils/lifecycle");
 
-const { computeEventHash } = require("../services/products/utils/chain");
+const { computeEventHash } = require("../common/utils/chain");
 
 const NUM_CHAINED = Number(process.env.SEED_CHAINED || 5);
 const DAY_MS = 24 * 60 * 60 * 1000;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api, AUTH } from "../api";
 
 export default function Login({ onLogin }) {
-	const [email, setEmail] = useState("internal@lw3.com");
+	const [email, setEmail] = useState("admin@supplychain.io");
 	const [password, setPassword] = useState("password123");
 	const [err, setErr] = useState("");
 
