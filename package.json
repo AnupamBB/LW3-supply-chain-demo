@@ -1,0 +1,20 @@
+{
+	"name": "supply-chain",
+	"version": "1.0.0",
+	"description": "Supply chain product lifecycle tracker",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"services/*",
+		"static/*"
+	],
+	"scripts": {
+		"auth": "npm run dev --workspace=apps/auth",
+		"products": "npm run dev --workspace=apps/products",
+		"dev": "concurrently \"npm run auth\" \"npm run products\"",
+		"seed": "node scripts/seed.js"
+	},
+	"devDependencies": {
+		"concurrently": "^8.2.2"
+	}
+}
