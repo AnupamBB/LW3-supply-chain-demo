@@ -5,8 +5,8 @@ const config = require("../../common/config");
 (async () => {
 	await connectDB();
 
-	const servicePort = process.env.PRODUCTS_SERVICE_PORT || 3003;
+	const servicePort = config.AUTH_SERVICE_PORT;
 	app.listen(servicePort, () => {
-		console.log(`Products service running on ${servicePort}`);
+		console.log(`Auth service running on ${servicePort}`);
 	});
 })();

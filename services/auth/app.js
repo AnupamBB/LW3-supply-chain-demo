@@ -1,12 +1,12 @@
 const express = require("express");
-const productRoutes = require("./routes/product.routes");
-const log = require("../../common/log").child({
-	module: "services/products/app",
-});
+const authRoutes = require("./routes/auth.routes");
+const log = require("../../common/log").child({ module: "services/auth/app" });
+
 const app = express();
+
 app.use(express.json());
 
-app.use("/", productRoutes);
+app.use("/", authRoutes);
 
 app.use((req, res) => {
 	res.status(404).json({ error: "Route not found" });

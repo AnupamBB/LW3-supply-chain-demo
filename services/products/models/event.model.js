@@ -7,18 +7,29 @@ const eventSchema = new mongoose.Schema(
 			ref: "Product",
 			required: true,
 			index: true,
+			immutable: true,
 		},
 		type: {
 			type: String,
 			enum: ["manufactured", "shipped", "received", "sold", "recycled"],
 			required: true,
+			immutable: true,
 		},
-		payload: { type: mongoose.Schema.Types.Mixed, default: {} },
+		payload: {
+			type: mongoose.Schema.Types.Mixed,
+			default: {},
+			immutable: true,
+		},
+		sequence: { type: Number, required: true, immutable: true },
 		previousEventId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Event",
 			default: null,
+			immutable: true,
 		},
+		previousHash: { type: String, default: null, immutable: true },
+		hash: { type: String, required: true, immutable: true },
+
 		createdAt: { type: Date, default: Date.now, immutable: true },
 	},
 	{
@@ -26,38 +37,18 @@ const eventSchema = new mongoose.Schema(
 	},
 );
 
-eventSchema.pre("findOneAndUpdate", function () {
-	throw new Error("Events are append-only and cannot be modified");
-});
+const blockMutation = (verb) =>
+	function () {
+		throw new Error(`Events are append-only and cannot be ${verb}`);
+	};
 
-eventSchema.pre("findByIdAndUpdate", function () {
-	throw new Error("Events are append-only and cannot be modified");
-});
+["findOneAndUpdate", "updateOne", "updateMany", "replaceOne"].forEach((op) =>
+	eventSchema.pre(op, blockMutation("modified")),
+);
+["findOneAndDelete", "deleteOne", "deleteMany"].forEach((op) =>
+	eventSchema.pre(op, blockMutation("deleted")),
+);
 
-eventSchema.pre("updateOne", function () {
-	throw new Error("Events are append-only and cannot be modified");
-});
-
-eventSchema.pre("updateMany", function () {
-	throw new Error("Events are append-only and cannot be modified");
-});
-
-eventSchema.pre("findOneAndDelete", function () {
-	throw new Error("Events are append-only and cannot be deleted");
-});
-
-eventSchema.pre("findByIdAndDelete", function () {
-	throw new Error("Events are append-only and cannot be deleted");
-});
-
-eventSchema.pre("deleteOne", function () {
-	throw new Error("Events are append-only and cannot be deleted");
-});
-
-eventSchema.pre("deleteMany", function () {
-	throw new Error("Events are append-only and cannot be deleted");
-});
-
-eventSchema.index({ productId: 1, createdAt: 1 });
+eventSchema.index({ productId: 1, sequence: 1 }, { unique: true });
 
 module.exports = mongoose.model("Event", eventSchema);

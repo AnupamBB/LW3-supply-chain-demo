@@ -1,17 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("../../common/db");
 const { PRODUCTS_PORT } = require("../../common/config");
 const productRoutes = require("./routes/product.routes");
 
 const app = express();
+console.log("product app started");
 
 app.use(cors());
 app.use(express.json());
-
-app.get("/health", (req, res) => {
-	res.json({ service: "products", status: "ok" });
-});
 
 app.use("/products", productRoutes);
 
@@ -20,14 +16,17 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-	console.error("Unhandled error:", err.message);
-	res.status(500).json({ error: "Internal server error" });
+	const status = err.statusCode || 500;
+	if (status >= 500) {
+		console.error("unhandled service error:", err);
+	}
+	res.status(status).json({
+		error: err.message || "Internal server error",
+	});
 });
 
-connectDB().then(() => {
-	app.listen(PRODUCTS_PORT, () => {
-		console.log(
-			`Products service running -> http://localhost:${PRODUCTS_PORT}`,
-		);
-	});
+app.listen(PRODUCTS_PORT, () => {
+	console.log(
+		`Products service running -> http://localhost:${PRODUCTS_PORT}`,
+	);
 });

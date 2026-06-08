@@ -10,14 +10,18 @@
 	],
 	"scripts": {
 		"auth": "npm run dev --workspace=apps/auth",
-		"products": "npm run dev --workspace=apps/products",
-		"dev": "concurrently \"npm run auth\" \"npm run products\"",
+		"auth-service": "npm run dev --workspace=services/auth",
+		"products-bff": "npm run dev --workspace=apps/products",
+		"products-service": "npm run dev --workspace=services/products",
+		"dashboard": "npm run dev --workspace=static/dashboard",
+		"dev": "concurrently -n auth,authsvc,bff,svc,web -c blue,cyan,green,magenta,yellow \"npm run auth\" \"npm run auth-service\" \"npm run products-bff\" \"npm run products-service\" \"npm run dashboard\"",
 		"seed": "node scripts/seed.js"
 	},
 	"devDependencies": {
 		"concurrently": "^8.2.2"
 	},
 	"dependencies": {
-		"axios": "^1.17.0"
+		"axios": "^1.17.0",
+		"mongoose": "^9.6.3"
 	}
 }

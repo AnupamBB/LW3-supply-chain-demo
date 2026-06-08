@@ -2,7 +2,10 @@
 	"name": "@supply-chain/service-products",
 	"version": "1.0.0",
 	"main": "index.js",
+	"scripts": {
+		"dev": "node index.js"
+	},
 	"dependencies": {
-		"mongoose": "^8.4.1"
+		"mongoose": "^9.6.3"
 	}
 }
