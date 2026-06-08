@@ -1,0 +1,8 @@
+{
+	"name": "@supply-chain/service-products",
+	"version": "1.0.0",
+	"main": "index.js",
+	"dependencies": {
+		"mongoose": "^8.4.1"
+	}
+}

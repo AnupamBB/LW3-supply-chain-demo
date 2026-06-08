@@ -1,4 +1,4 @@
-const service = require("../service/api");
+const service = require("./api");
 
 let api = {};
 
