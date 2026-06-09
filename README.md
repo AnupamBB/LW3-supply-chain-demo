@@ -28,6 +28,12 @@ A supply chain management system with immutable event logging, cryptographic cha
 ### Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/AnupamBB/LW3-supply-chain-demo.git
+
+# Navigate to the project directory
+cd LW3-supply-chain-demo
+
 # Install dependencies
 npm install
 
