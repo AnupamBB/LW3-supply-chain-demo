@@ -3,10 +3,18 @@ const connectDB = require("../../common/db");
 const config = require("../../common/config");
 
 (async () => {
-	await connectDB();
+	try {
+		await connectDB();
 
-	const servicePort = config.AUTH_SERVICE_PORT;
-	app.listen(servicePort, () => {
-		console.log(`Auth service running on ${servicePort}`);
-	});
+		const servicePort = config.AUTH_SERVICE_PORT;
+
+		app.listen(servicePort, () => {
+			console.log(
+				`Auth service running -> http://localhost:${servicePort}`,
+			);
+		});
+	} catch (err) {
+		console.error("Auth service failed to start:", err);
+		process.exit(1);
+	}
 })();

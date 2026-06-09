@@ -10,8 +10,30 @@ let controller = {};
 controller.createProduct = async function (req, res, next) {
 	try {
 		const { name, description, partnerId } = req.body;
-		const product = new Product({ name, description, partnerId });
+
+		const product = new Product({
+			name,
+			description,
+			partnerId,
+			status: "manufactured",
+		});
 		await product.save();
+
+		const event = new Event({
+			productId: product._id,
+			type: "manufactured",
+			sequence: 1,
+			previousEventId: null,
+			previousHash: null,
+			payload: {
+				note: "Product created",
+				location: "factory",
+			},
+		});
+
+		event.hash = computeEventHash(event);
+		await event.save();
+
 		res.status(201).json(product);
 	} catch (err) {
 		log.error(err, "createProduct error");

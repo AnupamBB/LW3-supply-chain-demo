@@ -6,7 +6,6 @@ const User = require("../services/auth/models/User");
 
 const demoUsers = require("../common/utils/demoUsers");
 const demoProducts = require("../common/utils/demoProducts");
-const LIFECYCLE = require("../common/utils/lifecycle");
 
 const { computeEventHash } = require("../common/utils/chain");
 
@@ -56,7 +55,6 @@ async function run() {
 	await productsColl.insertMany(products);
 	console.log(`Inserted ${products.length} products from file`);
 
-	// Events
 	const events = [];
 	const statusUpdates = [];
 
@@ -65,51 +63,51 @@ async function run() {
 
 		let previousHash = null;
 		let previousEventId = null;
+
 		let t = product.createdAt.getTime();
 
-		for (let seq = 0; seq < LIFECYCLE.length; seq++) {
-			const type = LIFECYCLE[seq];
-			const _id = new mongoose.Types.ObjectId();
+		const firstId = new mongoose.Types.ObjectId();
+		t += DAY_MS;
 
-			t += DAY_MS;
-			const createdAt = new Date(t);
+		const manufacturedCreatedAt = new Date(t);
 
-			const payload = {
-				note: `${type} event for ${product.name}`,
-				location: `factory-${seq}`,
-			};
+		const manufacturedPayload = {
+			note: `manufactured event for ${product.name}`,
+			location: `factory-0`,
+		};
 
-			const hash = computeEventHash({
-				productId: product._id,
-				type,
-				payload,
-				sequence: seq,
-				previousHash,
-				createdAt,
-			});
+		const manufacturedHash = computeEventHash({
+			productId: product._id,
+			type: "manufactured",
+			payload: manufacturedPayload,
+			sequence: 0,
+			previousHash: null,
+			createdAt: manufacturedCreatedAt,
+		});
 
-			events.push({
-				_id,
-				productId: product._id,
-				type,
-				payload,
-				sequence: seq,
-				previousEventId,
-				previousHash,
-				hash,
-				createdAt,
-			});
+		events.push({
+			_id: firstId,
+			productId: product._id,
+			type: "manufactured",
+			payload: manufacturedPayload,
+			sequence: 0,
+			previousEventId: null,
+			previousHash: null,
+			hash: manufacturedHash,
+			createdAt: manufacturedCreatedAt,
+		});
 
-			previousHash = hash;
-			previousEventId = _id;
-		}
+		previousHash = manufacturedHash;
+		previousEventId = firstId;
+
+		let seq = 1;
 
 		statusUpdates.push({
 			updateOne: {
 				filter: { _id: product._id },
 				update: {
 					$set: {
-						status: LIFECYCLE[LIFECYCLE.length - 1],
+						status: "manufactured",
 					},
 				},
 			},

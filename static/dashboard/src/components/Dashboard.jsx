@@ -1,21 +1,28 @@
 import { useState } from "react";
-import { api, PRODUCTS } from "../api";
+import { api } from "../api";
+import { getAuth } from "../utils/auth";
 import ProductCard from "./ProductCard";
+import ProductList from "./ProductList";
 
-export default function Dashboard({ token }) {
+export default function Dashboard() {
 	const [productId, setProductId] = useState("");
 	const [product, setProduct] = useState(null);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const loadProduct = async () => {
-		setError("");
+	const auth = getAuth();
+
+	const loadProduct = async (id) => {
+		const pid = id || productId;
+
 		setLoading(true);
+		setError("");
 
 		try {
-			const res = await api(PRODUCTS, `/products/${productId}`, {
-				token,
+			const res = await api("http://localhost:3002", `/products/${pid}`, {
+				token: auth?.token,
 			});
+
 			setProduct(res);
 		} catch (e) {
 			setError(e.message);
@@ -26,17 +33,19 @@ export default function Dashboard({ token }) {
 
 	return (
 		<div className="dashboard">
+			<ProductList onSelect={loadProduct} />
+
 			<div className="card">
-				<h2>Dashboard</h2>
+				<h2>Lookup Product</h2>
 
 				<div className="row">
 					<input
-						placeholder="Enter Product ID"
 						value={productId}
 						onChange={(e) => setProductId(e.target.value)}
+						placeholder="Enter Product ID"
 					/>
 
-					<button onClick={loadProduct} className="primary">
+					<button className="primary" onClick={() => loadProduct()}>
 						{loading ? "Loading..." : "Load"}
 					</button>
 				</div>
@@ -44,7 +53,7 @@ export default function Dashboard({ token }) {
 				{error && <p className="error">{error}</p>}
 			</div>
 
-			{product && <ProductCard token={token} product={product} />}
+			{product && <ProductCard product={product} />}
 		</div>
 	);
 }

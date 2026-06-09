@@ -1,24 +1,32 @@
 import { useState } from "react";
-import { api, PRODUCTS } from "../api";
+import { api } from "../api";
+import { getAuth } from "../utils/auth";
 
-export default function AddEventForm({ token, productId, onAdded }) {
+export default function AddEventForm({ productId, onAdded }) {
 	const [type, setType] = useState("shipped");
 	const [note, setNote] = useState("");
 	const [location, setLocation] = useState("");
+
 	const [busy, setBusy] = useState(false);
+
+	const auth = getAuth();
 
 	const submit = async () => {
 		setBusy(true);
 
 		try {
-			await api(PRODUCTS, `/products/${productId}/events`, {
-				method: "POST",
-				token,
-				body: {
-					type,
-					payload: { note, location },
+			await api(
+				"http://localhost:3002",
+				`/products/${productId}/events`,
+				{
+					method: "POST",
+					token: auth?.token,
+					body: {
+						type,
+						payload: { note, location },
+					},
 				},
-			});
+			);
 
 			setNote("");
 			setLocation("");
@@ -41,18 +49,18 @@ export default function AddEventForm({ token, productId, onAdded }) {
 			</select>
 
 			<input
-				placeholder="note"
 				value={note}
 				onChange={(e) => setNote(e.target.value)}
+				placeholder="note"
 			/>
 
 			<input
-				placeholder="location"
 				value={location}
 				onChange={(e) => setLocation(e.target.value)}
+				placeholder="location"
 			/>
 
-			<button onClick={submit} disabled={busy} className="primary">
+			<button className="primary" onClick={submit} disabled={busy}>
 				{busy ? "Adding..." : "Add Event"}
 			</button>
 		</div>

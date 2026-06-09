@@ -3,10 +3,18 @@ const connectDB = require("../../common/db");
 const config = require("../../common/config");
 
 (async () => {
-	await connectDB();
+	try {
+		await connectDB();
 
-	const servicePort = process.env.PRODUCTS_SERVICE_PORT || 3003;
-	app.listen(servicePort, () => {
-		console.log(`Products service running on ${servicePort}`);
-	});
+		const servicePort = config.PRODUCTS_SERVICE_PORT;
+
+		app.listen(servicePort, () => {
+			console.log(
+				`Products service running -> http://localhost:${servicePort}`,
+			);
+		});
+	} catch (err) {
+		console.error("Products service failed to start:", err);
+		process.exit(1);
+	}
 })();

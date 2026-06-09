@@ -14,7 +14,7 @@
 		"products-bff": "npm run dev --workspace=apps/products",
 		"products-service": "npm run dev --workspace=services/products",
 		"dashboard": "npm run dev --workspace=static/dashboard",
-		"dev": "concurrently -n auth,authsvc,bff,svc,web -c blue,cyan,green,magenta,yellow \"npm run auth\" \"npm run auth-service\" \"npm run products-bff\" \"npm run products-service\" \"npm run dashboard\"",
+		"dev": "concurrently -k -n auth,authsvc,bff,svc,web -c blue,cyan,green,magenta,yellow \"npm run auth\" \"npm run auth-service\" \"npm run products-bff\" \"npm run products-service\" \"npm run dashboard\"",
 		"seed": "node scripts/seed.js"
 	},
 	"devDependencies": {
